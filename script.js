@@ -15,16 +15,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderList = (data) => {
         listElement.innerHTML = '';
         data.forEach(item => {
+            const hasLink = item.link && item.link !== '#';
+            const mapsQuery = encodeURIComponent(`${item.name} ${item.address}`);
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+
             const row = document.createElement('div');
-            row.className = 'table-row animate-in';
+            row.className = `table-row animate-in ${!hasLink ? 'no-link-row' : ''}`;
             row.innerHTML = `
                 <div class="col-rank">${item.rank}</div>
                 <div class="col-name">${item.name}</div>
                 <div class="col-type"><span class="type-badge ${getTypeBadgeClass(item.type)}">${item.type}</span></div>
                 <div class="col-price">${item.price}</div>
-                <div class="col-location">${item.location}</div>
+                <div class="col-location">
+                    <a href="${mapsUrl}" target="_blank" class="address-link">
+                        <i class="fas fa-map-marker-alt"></i> ${item.address}
+                    </a>
+                </div>
                 <div class="col-action">
-                    ${item.link === '#' 
+                    ${!hasLink 
                         ? `<span class="reserve-btn disabled-btn">尚未提供</span>` 
                         : `<a href="${item.link}" target="_blank" class="reserve-btn">立即訂位</a>`}
                 </div>
@@ -51,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filtered = restaurantsData.filter(item => {
             const matchSearch = item.name.toLowerCase().includes(searchTerm) || 
-                              item.location.toLowerCase().includes(searchTerm);
+                              item.address.toLowerCase().includes(searchTerm);
             const matchType = activeType === 'all' || item.type.includes(activeType);
             return matchSearch && matchType;
         });
