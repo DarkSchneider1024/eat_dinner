@@ -1,0 +1,24 @@
+{
+  "name": "eat_dinner",
+  "version": "1.0.0",
+  "description": "這是 2026 年台中最強燒肉名單。 專為想吃「高 CP 値」燒肉的朋友整理，精選 20 家必吃名單。",
+  "main": "data.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkSchneider1024/eat_dinner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DarkSchneider1024/eat_dinner/issues"
+  },
+  "homepage": "https://github.com/DarkSchneider1024/eat_dinner#readme",
+  "dependencies": {
+    "firebase": "^12.11.0"
+  }
+}

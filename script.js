@@ -12,6 +12,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
 
 document.addEventListener('DOMContentLoaded', () => {
     // Note: restaurantsData and bookingLinks are from data.js
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewsRef = db.collection('reviews');
 
     const loadReviews = () => {
-        reviewsRef.orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
+        reviewsRef.orderBy('timestamp', 'desc').get().then((snapshot) => {
             if (snapshot.empty) {
                 reviewsWall.innerHTML = '<div class="loading-reviews">此處尚無煙火... 快來搶頭香評價！</div>';
                 return;
@@ -199,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 reviewsWall.appendChild(card);
             });
-        }, (error) => {
+        }).catch((error) => {
             console.error("Firestore error:", error);
             reviewsWall.innerHTML = `<div class="loading-reviews" style="color:red">無法讀取資料庫：${error.message}</div>`;
         });
@@ -233,6 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('reviewText').value = '';
             selectedRating = 0;
             ratingStars.forEach(s => s.className = 'far fa-star');
+            
+            // Reload reviews to show the new one
+            loadReviews();
         } catch (e) {
             console.error("Firebase Add Error:", e);
             alert('發表失敗：' + e.message);
