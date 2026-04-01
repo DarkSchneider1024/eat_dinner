@@ -283,18 +283,24 @@ body {
 }
 
 .address-link {
-    color: #2980B9;
+    color: #0066cc;
     text-decoration: none;
     font-size: 0.85rem;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     transition: var(--transition);
+    font-weight: 500;
 }
 
 .address-link:hover {
     color: var(--primary-color);
     text-decoration: underline;
+}
+
+.address-link i {
+    color: var(--primary-color);
+    font-size: 1rem;
 }
 
 /* Quick Links */
