@@ -1,25 +1,20 @@
-// Firebase Modular SDK Imports
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } 
-       from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-// Firebase Config (Provided by User)
+// Firebase Initial Setup (Compat Version)
 const firebaseConfig = {
-  apiKey: "AIzaSyBGheuvbR1NKe6PA0pLrdeJB0kyr5mNSxQ",
-  authDomain: "eatdinner-bb986.firebaseapp.com",
-  projectId: "eatdinner-bb986",
-  storageBucket: "eatdinner-bb986.firebasestorage.app",
-  messagingSenderId: "503284615803",
-  appId: "1:503284615803:web:455a12f1c5d2438fa5f0de",
-  measurementId: "G-LFQZ1NFR9H"
+    apiKey: "AIzaSyBGheuvbR1NKe6PA0pLrdeJB0kyr5mNSxQ",
+    authDomain: "eatdinner-bb986.firebaseapp.com",
+    projectId: "eatdinner-bb986",
+    storageBucket: "eatdinner-bb986.firebasestorage.app",
+    messagingSenderId: "503284615803",
+    appId: "1:503284615803:web:455a12f1c5d2438fa5f0de",
+    measurementId: "G-LFQZ1NFR9H"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Note: restaurantsData and bookingLinks are from global data.js
+    // Note: restaurantsData and bookingLinks are from data.js
     const listElement = document.getElementById('restaurantList');
     const linksElement = document.getElementById('bookingLinks');
     const searchInput = document.getElementById('searchInput');
@@ -174,22 +169,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Firebase Logic Area ---
-    const reviewsRef = collection(db, 'reviews');
+    // --- Firebase Compat Logic ---
+    const reviewsRef = db.collection('reviews');
 
-    // Load Reviews in Real-time from Firestore
     const loadReviews = () => {
-        const q = query(reviewsRef, orderBy('timestamp', 'desc'));
-        onSnapshot(q, (snapshot) => {
+        reviewsRef.orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
             if (snapshot.empty) {
-                reviewsWall.innerHTML = '<div class="loading-reviews">目前尚無評論，快來搶頭香！</div>';
+                reviewsWall.innerHTML = '<div class="loading-reviews">此處尚無煙火... 快來搶頭香評價！</div>';
                 return;
             }
             
             reviewsWall.innerHTML = '';
             snapshot.forEach((doc) => {
                 const rev = doc.data();
-                const timestamp = rev.timestamp ? rev.timestamp.toDate() : new Date();
+                const date = rev.timestamp ? rev.timestamp.toDate() : new Date();
                 
                 const card = document.createElement('div');
                 card.className = 'review-card';
@@ -197,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="review-restaurant-tag">${rev.restaurant}</span>
                     <div class="review-card-header">
                         <span class="review-author">${rev.author}</span>
-                        <span class="review-date">${timestamp.toLocaleDateString()}</span>
+                        <span class="review-date">${date.toLocaleDateString()}</span>
                     </div>
                     <div class="review-stars">
                         ${'<i class="fas fa-star"></i>'.repeat(rev.rating)}${'<i class="far fa-star"></i>'.repeat(5-rev.rating)}
@@ -207,45 +200,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 reviewsWall.appendChild(card);
             });
         }, (error) => {
-            console.error("Firestore loading error:", error);
-            reviewsWall.innerHTML = '<div class="loading-reviews" style="color:red">無法讀取資料庫。請確認 Firebase Firestore 規則是否已設為「測試模式」。</div>';
+            console.error("Firestore error:", error);
+            reviewsWall.innerHTML = `<div class="loading-reviews" style="color:red">無法讀取資料庫：${error.message}</div>`;
         });
     };
 
-    // Submit Review to Firestore
     const saveReview = async () => {
         const restaurant = reviewSelect.value;
         const author = document.getElementById('reviewAuthor').value;
         const comment = document.getElementById('reviewText').value;
 
         if (!restaurant || !author || !comment || selectedRating === 0) {
-            alert('親，請填寫完整資訊並給個評分喔！');
+            alert('親，記得填完資料並給個好評喔！');
             return;
         }
 
         submitReviewBtn.disabled = true;
-        submitReviewBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上傳中...';
+        submitReviewBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上傳同步中...';
 
         try {
-            await addDoc(reviewsRef, {
+            await reviewsRef.add({
                 restaurant,
                 author,
                 comment,
                 rating: selectedRating,
-                timestamp: serverTimestamp()
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // Success
-            alert('感謝您的分享！評論已成功雲端同步！');
+            alert('🔥 感謝分享！評論已即時雲端同步！');
             
-            // Reset UI
             document.getElementById('reviewAuthor').value = '';
             document.getElementById('reviewText').value = '';
             selectedRating = 0;
             ratingStars.forEach(s => s.className = 'far fa-star');
         } catch (e) {
-            console.error("Firebase submit error:", e);
-            alert('上傳失敗：' + e.message + '\n請檢查 Firebase 是否開啟資料庫寫入權限 (Test Mode)。');
+            console.error("Firebase Add Error:", e);
+            alert('發表失敗：' + e.message);
         } finally {
             submitReviewBtn.disabled = false;
             submitReviewBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 發表評論';
