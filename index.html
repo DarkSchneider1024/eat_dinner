@@ -33,8 +33,22 @@
                     <span class="stat-label">CP 值認證</span>
                 </div>
             </div>
+            <div class="hero-action animate-in delay-3">
+                <button id="randomPickerBtn" class="picker-btn">
+                    <i class="fas fa-dice"></i> 🥩 猶豫不決？靈魂選肉機
+                </button>
+            </div>
         </div>
     </header>
+
+    <!-- Selection Overlay -->
+    <div id="selectionOverlay" class="overlay hidden">
+        <div class="overlay-content">
+            <div class="picker-spinner"></div>
+            <h2 id="pickerStatus">正在精選您的口袋名單...</h2>
+            <div id="pickerResult" class="result-text hidden"></div>
+        </div>
+    </div>
 
     <main class="container">
         <section class="filters-section">

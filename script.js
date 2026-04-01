@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const filterButtons = document.querySelectorAll('.filter-btn');
 
+    // Picker Elements
+    const pickerBtn = document.getElementById('randomPickerBtn');
+    const overlay = document.getElementById('selectionOverlay');
+    const pickerStatus = document.getElementById('pickerStatus');
+    const pickerResult = document.getElementById('pickerResult');
+
     const getTypeBadgeClass = (type) => {
         if (type.includes('吃到飽')) return 'type-all-you-can-eat';
         if (type.includes('套餐')) return 'type-set-menu';
@@ -67,6 +73,33 @@ document.addEventListener('DOMContentLoaded', () => {
         renderList(filtered);
     };
 
+    // Random Picker Logic
+    const startPicker = () => {
+        overlay.classList.remove('hidden');
+        pickerStatus.textContent = "正在從 20 家最強口袋名單中為您挑選...";
+        pickerResult.classList.add('hidden');
+        pickerResult.textContent = "";
+
+        setTimeout(() => {
+            const winner = restaurantsData[Math.floor(Math.random() * restaurantsData.length)];
+            pickerStatus.textContent = "🔥 您的今日命定燒肉是：";
+            pickerResult.textContent = winner.name;
+            pickerResult.classList.remove('hidden');
+
+            const targetUrl = (winner.link && winner.link !== '#') 
+                ? winner.link 
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${winner.name} ${winner.address}`)}`;
+
+            setTimeout(() => {
+                pickerStatus.textContent = "正在前往預約/導航頁面...";
+                setTimeout(() => {
+                    window.open(targetUrl, '_blank');
+                    overlay.classList.add('hidden');
+                }, 1000);
+            }, 2000);
+        }, 2500);
+    };
+
     // Event Listeners
     searchInput.addEventListener('input', handleFilter);
 
@@ -77,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             handleFilter();
         });
     });
+
+    pickerBtn.addEventListener('click', startPicker);
 
     // Initial Render
     renderList(restaurantsData);
