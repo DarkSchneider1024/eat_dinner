@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pickerStatus = document.getElementById('pickerStatus');
     const pickerResult = document.getElementById('pickerResult');
 
+    // Review Elements
+    const reviewSelect = document.getElementById('reviewRestaurant');
+    const ratingStars = document.querySelectorAll('#ratingStars i');
+    const submitReviewBtn = document.getElementById('submitReview');
+    const reviewsWall = document.getElementById('reviewsWall');
+    let selectedRating = 0;
+
     const getTypeBadgeClass = (type) => {
         if (type.includes('吃到飽')) return 'type-all-you-can-eat';
         if (type.includes('套餐')) return 'type-set-menu';
@@ -20,6 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderList = (data) => {
         listElement.innerHTML = '';
+        
+        // Clear and repopulate review select
+        const currentVal = reviewSelect.value;
+        reviewSelect.innerHTML = '<option value="" disabled selected>請選擇您品嚐過的店家</option>';
+        
         data.forEach(item => {
             const hasLink = item.link && item.link !== '#';
             const mapsQuery = encodeURIComponent(`${item.name} ${item.address}`);
@@ -44,7 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             listElement.appendChild(row);
+
+            // Populate select option
+            const option = document.createElement('option');
+            option.value = item.name;
+            option.textContent = `${item.rank}. ${item.name}`;
+            reviewSelect.appendChild(option);
         });
+        if (currentVal) reviewSelect.value = currentVal;
     };
 
     const renderLinks = () => {
@@ -73,22 +92,16 @@ document.addEventListener('DOMContentLoaded', () => {
         renderList(filtered);
     };
 
-    // Advanced Link Check (Best Effort for Static Site)
+    // Advanced Link Check 
     const checkUrlStatus = async (url) => {
         if (!url || url === '#') return false;
-        
         try {
-            // Static sites have CORS limitations, so we attempt a 'no-cors' fetch
-            // If it succeeds (network OK), we assume 200 for now.
-            // If it fails (network error), we fallback.
             const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 2000); // 2s timeout
-            
+            const id = setTimeout(() => controller.abort(), 2000);
             await fetch(url, { mode: 'no-cors', signal: controller.signal });
             clearTimeout(id);
             return true; 
         } catch (e) {
-            console.log("Link check failed, falling back to Maps:", url);
             return false;
         }
     };
@@ -110,12 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(async () => {
                 pickerStatus.textContent = "正在檢查訂位連結狀態...";
-                
                 const isLive = await checkUrlStatus(winner.link);
                 const finalTarget = isLive ? winner.link : mapsUrl;
-
                 pickerStatus.textContent = isLive ? "正在前往官網訂位..." : "官網連結異常，正在開啟地圖導航...";
-                
                 setTimeout(() => {
                     window.open(finalTarget, '_blank');
                     overlay.classList.add('hidden');
@@ -124,9 +134,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2500);
     };
 
+    // Star Rating Interactivity
+    ratingStars.forEach(star => {
+        star.addEventListener('mouseover', () => {
+            const val = parseInt(star.dataset.value);
+            ratingStars.forEach((s, idx) => {
+                s.className = idx < val ? 'fas fa-star' : 'far fa-star';
+            });
+        });
+        
+        star.addEventListener('mouseout', () => {
+            ratingStars.forEach((s, idx) => {
+                s.className = idx < selectedRating ? 'fas fa-star' : 'far fa-star';
+            });
+        });
+
+        star.addEventListener('click', () => {
+            selectedRating = parseInt(star.dataset.value);
+            ratingStars.forEach((s, idx) => {
+                s.className = idx < selectedRating ? 'fas fa-star' : 'far fa-star';
+            });
+        });
+    });
+
+    // Review Logic (LocalStorage Placeholder until Firebase keys arrived)
+    const loadReviews = () => {
+        // This will be replaced by Firebase getDocs
+        const mockReviews = JSON.parse(localStorage.getItem('restaurant_reviews') || '[]');
+        if (mockReviews.length === 0) {
+            reviewsWall.innerHTML = '<div class="loading-reviews">目前尚無評論，快來搶頭香！</div>';
+            return;
+        }
+        
+        reviewsWall.innerHTML = '';
+        mockReviews.reverse().forEach(rev => {
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <span class="review-restaurant-tag">${rev.restaurant}</span>
+                <div class="review-card-header">
+                    <span class="review-author">${rev.author}</span>
+                    <span class="review-date">${new Date(rev.time).toLocaleDateString()}</span>
+                </div>
+                <div class="review-stars">
+                    ${'<i class="fas fa-star"></i>'.repeat(rev.rating)}${'<i class="far fa-star"></i>'.repeat(5-rev.rating)}
+                </div>
+                <p class="review-content">${rev.text}</p>
+            `;
+            reviewsWall.appendChild(card);
+        });
+    };
+
+    const saveReview = () => {
+        const restaurant = reviewSelect.value;
+        const author = document.getElementById('reviewAuthor').value;
+        const text = document.getElementById('reviewText').value;
+
+        if (!restaurant || !author || !text || selectedRating === 0) {
+            alert('親，請填寫完整資訊並給個評分喔！');
+            return;
+        }
+
+        const newReview = {
+            restaurant, author, text, rating: selectedRating, time: Date.now()
+        };
+
+        // For now, save to localStorage
+        const reviews = JSON.parse(localStorage.getItem('restaurant_reviews') || '[]');
+        reviews.push(newReview);
+        localStorage.setItem('restaurant_reviews', JSON.stringify(reviews));
+
+        // Feedback
+        alert('感謝您的分享！評論已同步火速上傳！');
+        
+        // Reset and Reload
+        document.getElementById('reviewAuthor').value = '';
+        document.getElementById('reviewText').value = '';
+        selectedRating = 0;
+        ratingStars.forEach(s => s.className = 'far fa-star');
+        loadReviews();
+    };
+
     // Event Listeners
     searchInput.addEventListener('input', handleFilter);
-
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             filterButtons.forEach(b => b.classList.remove('active'));
@@ -134,10 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
             handleFilter();
         });
     });
-
     pickerBtn.addEventListener('click', startPicker);
+    submitReviewBtn.addEventListener('click', saveReview);
 
     // Initial Render
     renderList(restaurantsData);
     renderLinks();
+    loadReviews();
 });

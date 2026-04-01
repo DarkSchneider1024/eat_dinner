@@ -77,13 +77,52 @@
             </div>
         </section>
 
-        <section class="quick-links">
-            <h2 class="section-title">🔗 快速訂位專網</h2>
-            <div class="links-grid" id="bookingLinks">
-                <!-- Links will be injected here -->
+        <!-- Booking Links Section... remains same -->
+
+        <!-- Restaurant Reviews Section -->
+        <section class="reviews-section fade-up">
+            <h2 class="section-title">🔥 炭火食記評論牆</h2>
+            
+            <div class="review-compose">
+                <div class="compose-header">
+                    <h3>分享您的美味記憶</h3>
+                    <div class="rating-input">
+                        <span class="star-label">給個好評：</span>
+                        <div class="stars" id="ratingStars">
+                            <i class="far fa-star" data-value="1"></i>
+                            <i class="far fa-star" data-value="2"></i>
+                            <i class="far fa-star" data-value="3"></i>
+                            <i class="far fa-star" data-value="4"></i>
+                            <i class="far fa-star" data-value="5"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="compose-body">
+                    <select id="reviewRestaurant" class="review-select">
+                        <option value="" disabled selected>請選擇您品嚐過的店家</option>
+                        <!-- Options will be populated via JS -->
+                    </select>
+                    <input type="text" id="reviewAuthor" placeholder="您的暱稱 (例如：肉肉特攻隊)" class="review-input">
+                    <textarea id="reviewText" placeholder="分享這家店的 CP 值、服務或是必點美味..." class="review-textarea"></textarea>
+                    <button id="submitReview" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> 發表評論
+                    </button>
+                </div>
+            </div>
+
+            <div id="reviewsWall" class="reviews-wall">
+                <!-- Reviews will be loaded here from Firebase -->
+                <div class="loading-reviews">
+                    <i class="fas fa-spinner fa-spin"></i> 正在火速載入大家的食記...
+                </div>
             </div>
         </section>
     </main>
+
+    <!-- Firebase SDK (Modular Version) -->
+    <script type="module">
+        // Firebase config will be injected here
+    </script>
 
     <footer class="footer">
         <p>&copy; 2026 台中燒肉最強推薦委員會. <br>內容已由 Carrot 更新維護（工人持續施工中...）</p>
