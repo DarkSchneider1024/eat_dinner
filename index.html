@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 台中燒肉 CP 值最強 20 選 | 城市食典</title>
+    <meta name="description" content="2026 台中燒肉 CP 值排行榜！精選 20 家必吃台中燒肉，涵蓋吃到飽、套餐、個人式燒肉。附上平均價位、地點與訂位連結。">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Icons -->
+    <script src="https://kit.fontawesome.com/your-icon-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="animate-in">台中燒肉 <span class="highlight">CP 値排行榜</span></h1>
+            <p class="animate-in delay-1">2026 頂級精選・20 家最強口袋名單</p>
+            <div class="hero-stats animate-in delay-2">
+                <div class="stat-item">
+                    <span class="stat-value">20+</span>
+                    <span class="stat-label">店家名單</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">$400起</span>
+                    <span class="stat-label">親民價位</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">Top 100%</span>
+                    <span class="stat-label">CP 值認證</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filters-section">
+            <div class="filter-group">
+                <button class="filter-btn active" data-type="all">全部</button>
+                <button class="filter-btn" data-type="吃到飽">吃到飽專區</button>
+                <button class="filter-btn" data-type="套餐制">精緻套餐</button>
+                <button class="filter-btn" data-type="個人套餐">個人獨享</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜尋店家名稱或地點...">
+            </div>
+        </section>
+
+        <section class="table-container fade-up">
+            <div class="table-header">
+                <div class="col-rank">排名</div>
+                <div class="col-name">店家名稱</div>
+                <div class="col-type">類型</div>
+                <div class="col-price">平均價位</div>
+                <div class="col-location">地點</div>
+                <div class="col-action">預約</div>
+            </div>
+            <div id="restaurantList" class="table-body">
+                <!-- Data will be injected here -->
+            </div>
+        </section>
+
+        <section class="quick-links">
+            <h2 class="section-title">🔗 快速訂位專網</h2>
+            <div class="links-grid" id="bookingLinks">
+                <!-- Links will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 台中燒肉 CP 強力推薦委員會. <br>內容將由作者手動更新維護（工人更新中...）</p>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
