@@ -1,4 +1,25 @@
+// Firebase Modular SDK Imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } 
+       from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+// Firebase Config (Provided by User)
+const firebaseConfig = {
+  apiKey: "AIzaSyBGheuvbR1NKe6PA0pLrdeJB0kyr5mNSxQ",
+  authDomain: "eatdinner-bb986.firebaseapp.com",
+  projectId: "eatdinner-bb986",
+  storageBucket: "eatdinner-bb986.firebasestorage.app",
+  messagingSenderId: "503284615803",
+  appId: "1:503284615803:web:455a12f1c5d2438fa5f0de",
+  measurementId: "G-LFQZ1NFR9H"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Note: restaurantsData and bookingLinks are from global data.js
     const listElement = document.getElementById('restaurantList');
     const linksElement = document.getElementById('bookingLinks');
     const searchInput = document.getElementById('searchInput');
@@ -27,8 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderList = (data) => {
         listElement.innerHTML = '';
-        
-        // Clear and repopulate review select
         const currentVal = reviewSelect.value;
         reviewSelect.innerHTML = '<option value="" disabled selected>請選擇您品嚐過的店家</option>';
         
@@ -57,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             listElement.appendChild(row);
 
-            // Populate select option
             const option = document.createElement('option');
             option.value = item.name;
             option.textContent = `${item.rank}. ${item.name}`;
@@ -106,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Random Picker Logic
     const startPicker = () => {
         overlay.classList.remove('hidden');
         pickerStatus.textContent = "正在從最強口袋名單中為您挑選...";
@@ -134,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2500);
     };
 
-    // Star Rating Interactivity
+    // Star Rating
     ratingStars.forEach(star => {
         star.addEventListener('mouseover', () => {
             const val = parseInt(star.dataset.value);
@@ -157,62 +174,82 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Review Logic (LocalStorage Placeholder until Firebase keys arrived)
+    // --- Firebase Logic Area ---
+    const reviewsRef = collection(db, 'reviews');
+
+    // Load Reviews in Real-time from Firestore
     const loadReviews = () => {
-        // This will be replaced by Firebase getDocs
-        const mockReviews = JSON.parse(localStorage.getItem('restaurant_reviews') || '[]');
-        if (mockReviews.length === 0) {
-            reviewsWall.innerHTML = '<div class="loading-reviews">目前尚無評論，快來搶頭香！</div>';
-            return;
-        }
-        
-        reviewsWall.innerHTML = '';
-        mockReviews.reverse().forEach(rev => {
-            const card = document.createElement('div');
-            card.className = 'review-card';
-            card.innerHTML = `
-                <span class="review-restaurant-tag">${rev.restaurant}</span>
-                <div class="review-card-header">
-                    <span class="review-author">${rev.author}</span>
-                    <span class="review-date">${new Date(rev.time).toLocaleDateString()}</span>
-                </div>
-                <div class="review-stars">
-                    ${'<i class="fas fa-star"></i>'.repeat(rev.rating)}${'<i class="far fa-star"></i>'.repeat(5-rev.rating)}
-                </div>
-                <p class="review-content">${rev.text}</p>
-            `;
-            reviewsWall.appendChild(card);
+        const q = query(reviewsRef, orderBy('timestamp', 'desc'));
+        onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                reviewsWall.innerHTML = '<div class="loading-reviews">目前尚無評論，快來搶頭香！</div>';
+                return;
+            }
+            
+            reviewsWall.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const rev = doc.data();
+                const timestamp = rev.timestamp ? rev.timestamp.toDate() : new Date();
+                
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <span class="review-restaurant-tag">${rev.restaurant}</span>
+                    <div class="review-card-header">
+                        <span class="review-author">${rev.author}</span>
+                        <span class="review-date">${timestamp.toLocaleDateString()}</span>
+                    </div>
+                    <div class="review-stars">
+                        ${'<i class="fas fa-star"></i>'.repeat(rev.rating)}${'<i class="far fa-star"></i>'.repeat(5-rev.rating)}
+                    </div>
+                    <p class="review-content">${rev.comment}</p>
+                `;
+                reviewsWall.appendChild(card);
+            });
+        }, (error) => {
+            console.error("Firestore loading error:", error);
+            reviewsWall.innerHTML = '<div class="loading-reviews" style="color:red">無法讀取資料庫。請確認 Firebase Firestore 規則是否已設為「測試模式」。</div>';
         });
     };
 
-    const saveReview = () => {
+    // Submit Review to Firestore
+    const saveReview = async () => {
         const restaurant = reviewSelect.value;
         const author = document.getElementById('reviewAuthor').value;
-        const text = document.getElementById('reviewText').value;
+        const comment = document.getElementById('reviewText').value;
 
-        if (!restaurant || !author || !text || selectedRating === 0) {
+        if (!restaurant || !author || !comment || selectedRating === 0) {
             alert('親，請填寫完整資訊並給個評分喔！');
             return;
         }
 
-        const newReview = {
-            restaurant, author, text, rating: selectedRating, time: Date.now()
-        };
+        submitReviewBtn.disabled = true;
+        submitReviewBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 上傳中...';
 
-        // For now, save to localStorage
-        const reviews = JSON.parse(localStorage.getItem('restaurant_reviews') || '[]');
-        reviews.push(newReview);
-        localStorage.setItem('restaurant_reviews', JSON.stringify(reviews));
+        try {
+            await addDoc(reviewsRef, {
+                restaurant,
+                author,
+                comment,
+                rating: selectedRating,
+                timestamp: serverTimestamp()
+            });
 
-        // Feedback
-        alert('感謝您的分享！評論已同步火速上傳！');
-        
-        // Reset and Reload
-        document.getElementById('reviewAuthor').value = '';
-        document.getElementById('reviewText').value = '';
-        selectedRating = 0;
-        ratingStars.forEach(s => s.className = 'far fa-star');
-        loadReviews();
+            // Success
+            alert('感謝您的分享！評論已成功雲端同步！');
+            
+            // Reset UI
+            document.getElementById('reviewAuthor').value = '';
+            document.getElementById('reviewText').value = '';
+            selectedRating = 0;
+            ratingStars.forEach(s => s.className = 'far fa-star');
+        } catch (e) {
+            console.error("Firebase submit error:", e);
+            alert('上傳失敗：' + e.message + '\n請檢查 Firebase 是否開啟資料庫寫入權限 (Test Mode)。');
+        } finally {
+            submitReviewBtn.disabled = false;
+            submitReviewBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 發表評論';
+        }
     };
 
     // Event Listeners
