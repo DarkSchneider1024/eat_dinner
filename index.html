@@ -63,17 +63,33 @@
             </div>
         </section>
 
-        <section class="table-container fade-up">
-            <div class="table-header">
-                <div class="col-rank">排名</div>
-                <div class="col-name">店家名稱</div>
-                <div class="col-type">類型</div>
-                <div class="col-price">平均價位</div>
-                <div class="col-location">地址 (地圖)</div>
-                <div class="col-action">預約</div>
+        <section class="main-content-layout">
+            <!-- 左側：地圖預覽懸浮窗 -->
+            <div id="mapPreview" class="map-preview-container">
+                <div id="mapPlaceholder" class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <p>點擊右側店家地址</p>
+                    <small>即可直接在此預覽位置</small>
+                </div>
+                <iframe 
+                    id="googleMapIframe"
+                    src="" 
+                    allowfullscreen>
+                </iframe>
             </div>
-            <div id="restaurantList" class="table-body">
-                <!-- Data will be injected here -->
+
+            <div class="table-container shadow-lg fade-up">
+                <div class="table-header">
+                    <div class="col-rank">排名</div>
+                    <div class="col-name">店家名稱</div>
+                    <div class="col-type">類型</div>
+                    <div class="col-price">平均價位</div>
+                    <div class="col-location">地址 (地圖)</div>
+                    <div class="col-action">預約</div>
+                </div>
+                <div id="restaurantList" class="table-body">
+                    <!-- Data will be injected here -->
+                </div>
             </div>
         </section>
 

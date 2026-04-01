@@ -14,6 +14,25 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
 
+// Handle map preview window globally so inline onClick can reach it
+window.updateMapPreview = function(name, address) {
+    const iframe = document.getElementById('googleMapIframe');
+    const placeholder = document.getElementById('mapPlaceholder');
+    
+    // 免 API Key 的搜尋連結格式
+    const encoded = encodeURIComponent(`${name} ${address}`);
+    iframe.src = `https://maps.google.com/maps?q=${encoded}&output=embed&t=m&z=16`;
+    
+    iframe.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+
+    // 捲動一下，回饋感更強 (Mobile fallback)
+    if (window.innerWidth < 1100) {
+        const mapEl = document.getElementById('mapPreview');
+        if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // Note: restaurantsData and bookingLinks are from data.js
     const listElement = document.getElementById('restaurantList');
@@ -60,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="col-type"><span class="type-badge ${getTypeBadgeClass(item.type)}">${item.type}</span></div>
                 <div class="col-price">${item.price}</div>
                 <div class="col-location">
-                    <a href="${mapsUrl}" target="_blank" class="address-link">
+                    <a href="${mapsUrl}" target="_blank" class="address-link" onclick="updateMapPreview('${item.name.replace(/'/g, "\\'")}', '${item.address.replace(/'/g, "\\'")}'); return false;">
                         <i class="fas fa-map-marker-alt"></i> ${item.address}
                     </a>
                 </div>
