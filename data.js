@@ -18,7 +18,9 @@ const restaurantsData = [
     { rank: "17", name: "瓦庫燒肉", type: "套餐制", price: "$1,100 - $1,800", address: "台中市中區民權路16號", link: "#" },
     { rank: "18", name: "燒肉眾", type: "吃到飽", price: "$600 - $1,000", address: "台中市南屯區文心路一段546號", link: "#" },
     { rank: "19", name: "敘禾燒肉", type: "套餐/單點", price: "$1,000 - $1,600", address: "台中市西區五權西三街111號", link: "#" },
-    { rank: "20", name: "俺達の肉屋", type: "單點制", price: "$2,500 - $4,000", address: "台中市西區公益路194-1號", link: "#" }
+    { rank: "20", name: "俺達の肉屋", type: "單點制", price: "$2,500 - $4,000", address: "台中市西區公益路194-1號", link: "#" },
+    { rank: "21", name: "石頭日式炭火燒肉", type: "吃到飽", price: "$500 - $700", address: "台中市西屯區漢口路二段148號", link: "http://www.stone-yakiniku.com.tw/" },
+    { rank: "22", name: "燒肉中山", type: "套餐制", price: "$1,500 - $3,000", address: "台中市南屯區大墩路533號", link: "#" }
 ];
 
 const bookingLinks = [
@@ -28,5 +30,6 @@ const bookingLinks = [
     { name: "老井極上", url: "https://www.laojing.com.tw/" },
     { name: "屋馬燒肉", url: "https://www.umai.tw/" },
     { name: "茶六訂位", url: "https://inline.app/booking/chaliu" },
-    { name: "燒肉Smile", url: "https://www.yakiniku-smile.com.tw/" }
+    { name: "燒肉Smile", url: "https://www.yakiniku-smile.com.tw/" },
+    { name: "石頭日式燒肉", url: "http://www.stone-yakiniku.com.tw/" }
 ];
