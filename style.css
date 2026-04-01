@@ -90,6 +90,7 @@ body {
 .hero h1 .highlight {
     background: linear-gradient(120deg, var(--primary-color), var(--accent-color));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -258,6 +259,18 @@ body {
 .reserve-btn:hover {
     background: var(--primary-dark);
     box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
+}
+
+.disabled-btn {
+    background: #E0E0E0;
+    color: #999;
+    cursor: default;
+    box-shadow: none;
+}
+
+.disabled-btn:hover {
+    background: #E0E0E0;
+    box-shadow: none;
 }
 
 /* Quick Links */

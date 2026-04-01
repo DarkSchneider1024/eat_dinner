@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="col-price">${item.price}</div>
                 <div class="col-location">${item.location}</div>
                 <div class="col-action">
-                    <a href="${item.link}" target="_blank" class="reserve-btn">${item.link === '#' ? '查看詳情' : '立即訂位'}</a>
+                    ${item.link === '#' 
+                        ? `<span class="reserve-btn disabled-btn">尚未提供</span>` 
+                        : `<a href="${item.link}" target="_blank" class="reserve-btn">立即訂位</a>`}
                 </div>
             `;
             listElement.appendChild(row);
