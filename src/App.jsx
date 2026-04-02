@@ -151,7 +151,7 @@ function App() {
       <main className="container">
         <section className="city-selector fade-up">
            <div className="city-tabs">
-              {['台中', '彰化', '斗六', '嘉義'].map(city => (
+              {['台中', '彰化', '斗六', '嘉義', '台南'].map(city => (
                 <button 
                   key={city}
                   className={`city-tab ${selectedCity === city ? 'active' : ''}`}
