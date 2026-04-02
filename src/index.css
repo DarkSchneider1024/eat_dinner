@@ -743,3 +743,63 @@ body {
         font-size: 0.95rem;
     }
 }
+
+/* Like & Ranking System CSS */
+.like-badge {
+    background: #FFF0F0;
+    color: #FF4D4D;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Outfit', sans-serif;
+    border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+.name-with-tag {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hot-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #FF4D4D;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.like-btn {
+    padding: 8px 16px;
+    background: white;
+    color: #FF4D4D;
+    border: 1px solid #FF4D4D;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.like-btn:hover {
+    background: #FF4D4D;
+    color: white;
+    transform: scale(1.05);
+}
+
+.like-btn i {
+    margin-right: 5px;
+}
+

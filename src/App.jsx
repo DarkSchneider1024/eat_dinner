@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, onSnapshot, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, setDoc, doc, onSnapshot, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
 import { restaurantsData } from './data';
 import './index.css';
@@ -9,6 +9,9 @@ function App() {
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [mapUrl, setMapUrl] = useState('');
+  
+  // Stats & Likes
+  const [likesData, setLikesData] = useState({}); // { name: count }
   
   // Picker State
   const [pickerState, setPickerState] = useState({ show: false, text: '', result: '' });
@@ -20,35 +23,57 @@ function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const q = query(collection(db, 'reviews'), orderBy('timestamp', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+    // Listen to Reviews
+    const qReviews = query(collection(db, 'reviews'), orderBy('timestamp', 'desc'));
+    const unsubReviews = onSnapshot(qReviews, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setReviews(data);
       setLoadingReviews(false);
-    }, (error) => {
-      console.error("Firestore error:", error);
-      setLoadingReviews(false);
     });
-    return () => unsubscribe();
+
+    // Listen to Likes
+    const qLikes = collection(db, 'likes');
+    const unsubLikes = onSnapshot(qLikes, (snapshot) => {
+      const likesMap = {};
+      snapshot.docs.forEach(doc => {
+        likesMap[doc.id] = doc.data().count || 0;
+      });
+      setLikesData(likesMap);
+    });
+
+    return () => { unsubReviews(); unsubLikes(); };
   }, []);
 
-  const filteredRestaurants = restaurantsData.filter(item => {
-    const matchCity = item.city === selectedCity;
-    const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        item.address.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchType = filterType === 'all' || item.type.includes(filterType);
-    return matchCity && matchSearch && matchType;
-  });
+  const handleLike = async (name) => {
+    const likeRef = doc(db, 'likes', name);
+    const currentCount = likesData[name] || 0;
+    try {
+        await setDoc(likeRef, { count: currentCount + 1 }, { merge: true });
+    } catch (err) {
+        console.error("Like error:", err);
+    }
+  };
+
+  const filteredRestaurants = restaurantsData
+    .filter(item => {
+      const matchCity = item.city === selectedCity;
+      const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          item.address.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchType = filterType === 'all' || item.type.includes(filterType);
+      return matchCity && matchSearch && matchType;
+    })
+    .sort((a, b) => {
+      const countA = likesData[a.name] || 0;
+      const countB = likesData[b.name] || 0;
+      return countB - countA; // Sort by likes descending
+    });
 
   const getTypeBadgeClass = (type) => {
     if (type.includes('吃到飽')) return 'type-all-you-can-eat';
     if (type.includes('套餐')) return 'type-set-menu';
     if (type.includes('個人')) return 'type-individual';
     if (type.includes('單點')) return 'type-ala-carte';
-    if (type.includes('專人')) return 'type-mixed'; // For 官東燒肉
+    if (type.includes('專人')) return 'type-mixed';
     return 'type-mixed';
   };
 
@@ -78,10 +103,25 @@ function App() {
     if (cityPool.length === 0) return;
 
     setPickerState({ show: true, text: `正在從${selectedCity}最強口袋名單中挑選...`, result: '' });
+    
+    // Weighted Random Algorithm
+    // Weight = 1 + likes (ensures everyone has at least 1 chance)
+    const weights = cityPool.map(r => (likesData[r.name] || 0) + 1);
+    const totalWeight = weights.reduce((a, b) => a + b, 0);
+    
     setTimeout(async () => {
-      const winner = cityPool[Math.floor(Math.random() * cityPool.length)];
-      setPickerState({ show: true, text: "🔥 您的今日命定燒肉是：", result: winner.name });
+      let randomNum = Math.random() * totalWeight;
+      let winner = cityPool[0];
+      
+      for (let i = 0; i < cityPool.length; i++) {
+        randomNum -= weights[i];
+        if (randomNum <= 0) {
+          winner = cityPool[i];
+          break;
+        }
+      }
 
+      setPickerState({ show: true, text: "🔥 您的今日命定燒肉是：", result: winner.name });
       const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${winner.name} ${winner.address}`)}`;
       
       setTimeout(async () => {
@@ -183,7 +223,7 @@ function App() {
             {!mapUrl ? (
               <div className="map-placeholder">
                 <i className="fas fa-map-marked-alt"></i>
-                <p>點擊右側店家地址</p><small>即可直接在此預覽位置</small>
+                <p>點擊左側店家地址</p><small>即可直接在此預覽位置</small>
               </div>
             ) : (
               <iframe src={mapUrl} style={{ display: 'block' }} allowFullScreen></iframe>
@@ -192,22 +232,30 @@ function App() {
 
           <div className="table-container shadow-lg fade-up">
             <div className="table-header">
-              <div className="col-rank">排名</div>
-              <div className="col-name">店家名稱</div>
+              <div className="col-rank">人氣</div>
+              <div className="col-name">店家名稱 / 推薦度</div>
               <div className="col-type">類型</div>
               <div className="col-price">平均價位</div>
               <div className="col-location">地址 (地圖)</div>
-              <div className="col-action">預約</div>
+              <div className="col-action">操作</div>
             </div>
             <div className="table-body">
               {filteredRestaurants.map((item, idx) => {
                 const hasLink = item.link && item.link !== '#';
+                const likes = likesData[item.name] || 0;
                 return (
                   <div key={idx} className={`table-row animate-in ${!hasLink ? 'no-link-row' : ''}`}>
-                    <div className="col-rank">{item.rank}</div>
+                    <div className="col-rank">
+                        <div className="like-badge">
+                            <i className="fas fa-fire"></i> {likes}
+                        </div>
+                    </div>
                     <div className="col-name">
-                        {item.name}
-                        {item.name.includes('官東') && <span className="recommend-tag">👑 行家推薦</span>}
+                        <div className="name-with-tag">
+                            {item.name}
+                            {item.name.includes('官東') && <span className="recommend-tag">👑 行家推薦</span>}
+                            {likes > 10 && <span className="hot-tag">🔥 超人氣</span>}
+                        </div>
                     </div>
                     <div className="col-type"><span className={`type-badge ${getTypeBadgeClass(item.type)}`}>{item.type}</span></div>
                     <div className="col-price">{item.price}</div>
@@ -217,7 +265,12 @@ function App() {
                       </a>
                     </div>
                     <div className="col-action">
-                      {hasLink ? <a href={item.link} target="_blank" rel="noreferrer" className="reserve-btn">立即預約</a> : <span className="reserve-btn disabled-btn">尚未提供</span>}
+                      <div className="action-buttons">
+                        <button className="like-btn" onClick={() => handleLike(item.name)}>
+                            <i className="fas fa-thumbs-up"></i> 喜歡
+                        </button>
+                        {hasLink ? <a href={item.link} target="_blank" rel="noreferrer" className="reserve-btn">預約</a> : <span className="reserve-btn disabled-btn">尚未提供</span>}
+                      </div>
                     </div>
                   </div>
                 )
@@ -245,7 +298,7 @@ function App() {
               <select className="review-select" value={reviewForm.restaurant} onChange={e => setReviewForm({...reviewForm, restaurant: e.target.value})}>
                 <option value="" disabled>請選擇您品嚐過的店家</option>
                 {restaurantsData.filter(r => r.city === selectedCity).map((item, i) => (
-                  <option key={i} value={item.name}>{item.rank}. {item.name}</option>
+                  <option key={i} value={item.name}>{item.name}</option>
                 ))}
               </select>
               <input type="text" placeholder="您的暱稱 (例如：肉肉特攻隊)" className="review-input" 
