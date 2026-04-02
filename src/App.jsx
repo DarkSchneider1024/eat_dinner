@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, onSnapshot, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
-import { restaurantsData, bookingLinks } from './data';
+import { restaurantsData } from './data';
 import './index.css';
 
 function App() {
@@ -61,11 +61,11 @@ function App() {
     if (!url || url === '#') return false;
     try {
       const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 2000);
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
       await fetch(url, { mode: 'no-cors', signal: controller.signal });
-      clearTimeout(id);
+      clearTimeout(timeoutId);
       return true; 
-    } catch (e) {
+    } catch {
       return false;
     }
   };
@@ -105,8 +105,8 @@ function App() {
         });
         alert('🔥 感謝分享！評論已即時雲端同步！');
         setReviewForm({ restaurant: '', author: '', comment: '', rating: 0 });
-    } catch (e) {
-        alert('發表失敗：' + e.message);
+    } catch (err) {
+        alert('發表失敗：' + err.message);
     } finally {
         setIsSubmitting(false);
     }
