@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewsRef = db.collection('reviews');
 
     const loadReviews = () => {
-        reviewsRef.orderBy('timestamp', 'desc').get().then((snapshot) => {
+        reviewsRef.orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
             if (snapshot.empty) {
                 reviewsWall.innerHTML = '<div class="loading-reviews">此處尚無煙火... 快來搶頭香評價！</div>';
                 return;
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 reviewsWall.appendChild(card);
             });
-        }).catch((error) => {
+        }, (error) => {
             console.error("Firestore error:", error);
             reviewsWall.innerHTML = `<div class="loading-reviews" style="color:red">無法讀取資料庫：${error.message}</div>`;
         });
@@ -254,8 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedRating = 0;
             ratingStars.forEach(s => s.className = 'far fa-star');
             
-            // Reload reviews to show the new one
-            loadReviews();
+            // onSnapshot 會自動監聽並更新畫面，不需要手動 reload
         } catch (e) {
             console.error("Firebase Add Error:", e);
             alert('發表失敗：' + e.message);
