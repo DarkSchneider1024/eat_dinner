@@ -11,6 +11,17 @@ export const restaurantsData = [
     { city: "台中", rank: "09", name: "Oh ! Yaki", type: "吃到飽", price: "$600 - $900", address: "台中市西區明義街6號1樓", link: "#" },
     { city: "台中", rank: "10", name: "燒肉風間", type: "套餐制", price: "$1,500 - $2,500", address: "台中市南屯區公益路二段171-1號", link: "#" },
     { city: "台中", rank: "11", name: "燒肉Smile", type: "個人套餐", price: "$400 - $1,000", address: "台中市西屯區文心路二段215號", link: "https://www.yakiniku-smile.com.tw/" },
+    { city: "台中", rank: "12", name: "愛烤愛對囉", type: "吃到飽", price: "$500 - $900", address: "台中市東區雙十路一段6之11號", link: "#" },
+    { city: "台中", rank: "13", name: "三山燒肉", type: "套餐制", price: "$1,000 - $1,800", address: "台中市南屯區文心路一段536號", link: "#" },
+    { city: "台中", rank: "14", name: "肉夯夯韓式", type: "吃到飽", price: "$500 - $700", address: "台中市東區復興路四段186號11樓", link: "#" },
+    { city: "台中", rank: "15", name: "昭日堂燒肉", type: "套餐/單點", price: "$1,000 - $2,000", address: "台中市南屯區大墩十一街345號", link: "#" },
+    { city: "台中", rank: "16", name: "匠屋燒肉", type: "套餐/單點", price: "$1,200 - $2,500", address: "台中市西屯區朝富二街20號", link: "#" },
+    { city: "台中", rank: "17", name: "瓦庫燒肉", type: "套餐制", price: "$1,100 - $1,800", address: "台中市中區民權路16號", link: "#" },
+    { city: "台中", rank: "18", name: "燒肉眾", type: "吃到飽", price: "$600 - $1,000", address: "台中市南屯區文心路一段546號", link: "#" },
+    { city: "台中", rank: "19", name: "敘禾燒肉", type: "套餐/單點", price: "$1,000 - $1,600", address: "台中市西區五權西三街111號", link: "#" },
+    { city: "台中", rank: "20", name: "俺達の肉屋", type: "單點制", price: "$2,500 - $4,000", address: "台中市西區公益路194-1號", link: "#" },
+    { city: "台中", rank: "21", name: "石頭日式炭火燒肉", type: "吃到飽", price: "$500 - $700", address: "台中市西屯區漢口路二段148號", link: "http://www.stone-yakiniku.com.tw/" },
+    { city: "台中", rank: "22", name: "燒肉中山", type: "套餐制", price: "$1,500 - $3,000", address: "台中市南屯區大墩路533號", link: "#" },
 
     // 彰化市 (Changhua)
     { city: "彰化", rank: "01", name: "官東燒肉 (員林店)", type: "專人代烤", price: "$1,000 - $2,000", address: "彰化縣埔心鄉員林大道七段318號", link: "https://inline.app/booking/-MW9uW-pOnFf3rZ1R_6J" },
