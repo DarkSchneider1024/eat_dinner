@@ -1,7 +1,7 @@
 export const restaurantsData = [
-    { rank: "01", name: "森森燒肉", type: "半自助式", price: "$900 - $1,500", address: "台中市南屯區公益路二段211號", link: "https://www.morimorisun.com/" },
+    { rank: "01", name: "森森燒肉", type: "半自助式", price: "$900 - $1,500", address: "台中市南屯區公益路二段211號", link: "https://inline.app/booking/-N5p3uMvN-L9uM2G8B_I:inline-live-2/-N5p3uP3H48zQ8T8Yp_N" },
     { rank: "02", name: "肉次方", type: "吃到飽", price: "$600 - $1,100", address: "台中市北屯區文心路四段585號", link: "https://www.powerofmeat.com.tw/" },
-    { rank: "03", name: "烤狀猿", type: "吃到飽", price: "$600 - $1,300", address: "台中市大里區大里路118號", link: "https://www.ksy.com.tw/" },
+    { rank: "03", name: "烤狀猿", type: "吃到飽", price: "$600 - $1,300", address: "台中市大里區大里路118號", link: "https://inline.app/booking/-LPT_6EtMUQMmp6kSNXL:inline-live-2/-LPT_6EtMUQMmp6kSNXN" },
     { rank: "04", name: "老井極上燒肉", type: "套餐制", price: "$1,200 - $2,000", address: "台中市西區美村路一段289號", link: "https://www.laojing.com.tw/" },
     { rank: "05", name: "本格和牛", type: "吃到飽", price: "$600 - $1,800", address: "台中市北屯區崇德路三段77號", link: "#" },
     { rank: "06", name: "茶六燒肉堂", type: "套餐制", price: "$1,000 - $1,800", address: "台中市西區公益路268號", link: "https://inline.app/booking/chaliu" },
@@ -24,8 +24,8 @@ export const restaurantsData = [
 ];
 
 export const bookingLinks = [
-    { name: "烤狀猿官網", url: "https://www.ksy.com.tw/" },
-    { name: "森森燒肉", url: "https://www.morimorisun.com/" },
+    { name: "烤狀猿訂位", url: "https://inline.app/booking/-LPT_6EtMUQMmp6kSNXL:inline-live-2/-LPT_6EtMUQMmp6kSNXN" },
+    { name: "森森燒肉預約", url: "https://inline.app/booking/-N5p3uMvN-L9uM2G8B_I:inline-live-2/-N5p3uP3H48zQ8T8Yp_N" },
     { name: "肉次方預約", url: "https://www.powerofmeat.com.tw/" },
     { name: "老井極上", url: "https://www.laojing.com.tw/" },
     { name: "屋馬燒肉", url: "https://www.umai.tw/" },
