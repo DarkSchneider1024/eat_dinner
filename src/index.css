@@ -279,12 +279,12 @@ body {
     opacity: 1;
 }
 
-.col-rank { flex: 0 0 60px; font-weight: 700; font-family: 'Outfit', sans-serif; color: var(--primary-color); font-size: 1.25rem; }
-.col-name { flex: 1; font-weight: 700; font-size: 1.1rem; }
+.col-rank { flex: 0 0 80px; font-weight: 700; font-family: 'Outfit', sans-serif; color: var(--primary-color); font-size: 1.25rem; }
+.col-name { flex: 2; min-width: 250px; font-weight: 700; font-size: 1.1rem; }
 .col-type { flex: 0 0 120px; }
 .col-price { flex: 0 0 160px; color: var(--text-secondary); }
-.col-location { flex: 0 0 150px; color: var(--text-secondary); font-size: 0.95rem; }
-.col-action { flex: 0 0 120px; text-align: right; }
+.col-location { flex: 1; min-width: 200px; color: var(--text-secondary); font-size: 0.95rem; }
+.col-action { flex: 0 0 180px; text-align: right; }
 
 .type-badge {
     padding: 5px 12px;
