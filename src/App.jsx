@@ -218,6 +218,17 @@ function App() {
           </div>
         </section>
 
+        <section className="ad-banner animate-in delay-2">
+           <div className="ad-content">
+             <div className="ad-badge">SPONSORED</div>
+             <div className="ad-text">
+                <h3>🔥 本月熱火精選：碳佐麻里 府前旗艦店</h3>
+                <p>極品和牛全新進榜，預約即享主廚特製逸品，立即體驗南霸天燒肉魅力！</p>
+             </div>
+             <a href="https://www.crun.com.tw/" target="_blank" rel="noreferrer" className="ad-cta">了解更多</a>
+           </div>
+        </section>
+
         <section className="main-content-layout">
           <div id="mapPreview" className="map-preview-container">
             {!mapUrl ? (
