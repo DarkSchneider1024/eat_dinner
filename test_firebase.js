@@ -1,15 +1,7 @@
 const { initializeApp } = require("firebase/app");
 const { getFirestore, collection, getDocs } = require("firebase/firestore");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBGheuvbR1NKe6PA0pLrdeJB0kyr5mNSxQ",
-  authDomain: "eatdinner-bb986.firebaseapp.com",
-  projectId: "eatdinner-bb986",
-  storageBucket: "eatdinner-bb986.firebasestorage.app",
-  messagingSenderId: "503284615803",
-  appId: "1:503284615803:web:455a12f1c5d2438fa5f0de",
-  measurementId: "G-LFQZ1NFR9H"
-};
+const firebaseConfig = require("./config.js");
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
