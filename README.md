@@ -1,55 +1,69 @@
-# 2026 台中燒肉最強推薦 - React 重構版 ⚛️
+# 🥩 台中、彰化、雲嘉南燒肉最強排行榜 (React 升級版)
 
-這是一個專為燒肉愛好者設計的台中燒肉指南網站。採用 **React + Vite** 架構，並升級至 **Firebase 模組化版本 (v9+)**。
+這是一個專為燒肉控設計的現代化 Web 應用程式，收錄了台中、彰化、斗六、嘉義及台南五大城市最強的燒肉口袋名單。本專案已全面從原生 JavaScript 重構為 **React + Vite** 架構，並整合了 Firebase 即時雲端數據系統。
 
-## 🌟 核心功能
+## 🚀 核心功能與特色
 
--   **精選名單**：整理 20+ 間台中必吃燒肉，包含吃到飽、精緻套餐與個人套餐。
--   **智慧篩選**：可根據類別（吃到飽、套餐等）或名稱即時搜尋。
--   **地圖預覽**：點擊地址即可在頁面左側即時預覽 Google Maps 位置，無需跳轉。
--   **靈魂選肉機**：專為猶豫不決者設計，隨機從名單中挑選店家並自動檢查連結狀態。
--   **即時評論牆**：整合 Firebase Firestore，實現免重新整理、秒速同步的真實評論功能。
+### 📍 1. 跨城市版本支援
+*   **五大城市一鍵切換**：收錄台中 (22+ 完整版)、彰化客製版、斗六旗艦版、嘉義 (含官東系列) 與台南 (碳佐麻里等 20+ 精選)。
+*   **在地化推薦標章**：針對特定地區的知名店家（如「官東燒肉」系列）自動標註 `👑 行家推薦`。
+
+### 🔥 2. 即時人氣排名系統 (Ranking 2.0)
+*   **喜歡就點讚**：整合 Firebase Firestore，每一位使用者的點讚都會即時同步到雲端。
+*   **動態排序**：列表會根據各店家的實時點讚數由高到低自動重新排列，誰才是最強燒肉，數據說了算！
+*   **超人氣標籤**：點讚數突破臨界值後，店家將獲得 `🔥 超人氣` 視覺勳章。
+
+### 🎲 3. 靈魂選肉機 (加權隨機演算法)
+*   **命定燒肉**：解決你的選擇障礙，點擊按鈕即可隨機抽取今日幸運店家。
+*   **加權機制**：系統會根據店家的**點讚數**增加權重（權重 = 點讚數 + 1），人氣越高的店，被抽中的機率越高，但每一家店都有保底的被抽中機會！
+*   **智慧訂位檢查**：挑中後會自動檢查官網連結，若連結失效則自動轉派 Google 地圖導航。
+
+### 💬 4. 炭火食記評論牆
+*   **即時評論監聽**：使用 `onSnapshot` 實現無重新整理載入，不再受限於載入時間。
+*   **星級評分功能**：支援 1-5 星評價與實體文字心得分享，數據雲端加密同步。
+
+### 🗺️ 5. 互動式地圖預覽
+*   **Sticky Map**：在桌機版提供固定側邊欄地圖，點擊地址立即預覽位置，無需跳頁。
+*   **響應式設計**：完美支援手機與平板瀏覽。
 
 ## 🛠️ 技術棧
 
--   **框架**: [React 18](https://reactjs.org/)
--   **建構工具**: [Vite](https://vitejs.dev/)
--   **資料庫**: [Firebase Firestore](https://firebase.google.com/docs/firestore) (採用最新的模組化 SDK)
--   **樣式**: Vanilla CSS (現代化響應式設計)
--   **字體**: Google Fonts (Outfit, Inter, Noto Sans TC)
+*   **前端框架**：React 18 + Vite 6
+*   **後端服務**：Firebase (Firestore Modular SDK)
+*   **自動化部署**：GitHub Actions (CI/CD)
+*   **樣式與美學**：Vanilla CSS 3 (含 Glassmorphism、高級漸層與動態場景動畫)
+*   **字體**：Google Fonts (Inter, Outfit, Noto Sans TC)
 
 ## 📁 專案結構
 
 ```text
 eat_dinner/
 ├── src/
-│   ├── App.jsx        # 主要 React 應用邏輯與 UI
-│   ├── firebase.js    # Firebase 初始化配置 (Modular SDK)
-│   ├── data.js        # 所有的店家靜態資料
-│   ├── index.css      # 全局樣式設計
-│   └── main.jsx       # 進入點
-├── public/            # 靜態資源 (圖示等)
-├── index.html         # 基礎 HTML 模板
-└── package.json       # 專案依賴與腳本
+│   ├── assets/        # 靜態資源 (背景圖、圖片)
+│   ├── App.jsx        # 核心邏輯 (含人氣算法、資料處理)
+│   ├── firebase.js    # Firebase 初始化與設定
+│   ├── data.js        # 各城市餐廳靜態資料庫
+│   └── index.css      # 全局樣式設計
+├── public/            # 公用靜態檔案
+├── .github/           # GitHub Actions 建置腳本 (deploy.yml)
+├── vite.config.js     # 建置與 Base 路徑設定
+└── package.json       # 專案依賴
 ```
 
-## 🚀 快速開始
+## 📦 開發與部署
 
-1.  **安裝依賴**:
-    ```bash
-    npm install
-    ```
+### 本地開發
+```bash
+# 安裝依賴
+npm install
 
-2.  **本地開發**:
-    ```bash
-    npm run dev
-    ```
+# 啟動開發伺服器
+npm run dev
+```
 
-3.  **生產環境打包**:
-    ```bash
-    npm run build
-    ```
+### 部署至 GitHub Pages
+本專案已配置 GitHub Actions。只要將變更推送到 `main` 分支，系統會自動執行 `npm run build` 並部署至 GitHub Pages。
+> **注意**：部署後若路徑不正確，請檢查 `vite.config.js` 中的 `base` 設定。
 
-## 📝 備註
-
-本人目前由 **Antigravity (Google DeepMind)** AI 助理持續維護與施工中。內容已進行 React 元件化與架構升級，效能與維護性大提升！
+---
+&copy; 2026 燒肉最強推薦委員會 - 內容由 React + Vite 重構升級 ⚛️
