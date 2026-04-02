@@ -51,7 +51,7 @@ body {
     position: relative;
     height: 70vh;
     min-height: 500px;
-    background-image: url('hero-bg.png');
+    background-image: url('./assets/hero-bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
