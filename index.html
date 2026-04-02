@@ -1,153 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 台中燒肉 CP 值最強 20 選 | 城市食典</title>
-    <meta name="description" content="2026 台中燒肉 CP 值排行榜！精選必吃台中燒肉，涵蓋吃到飽、套餐、個人式燒肉。附上平均價位、地址導航與訂位連結。">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2026 台中燒肉 CP 值最強 20 選 | React 重構版</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <header class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1 class="animate-in">台中燒肉 <span class="highlight">最強排行榜</span></h1>
-            <p class="animate-in delay-1">2026 頂級精選・必吃口袋名單</p>
-            <div class="hero-stats animate-in delay-2">
-                <div class="stat-item">
-                    <span class="stat-value">20+</span>
-                    <span class="stat-label">店家名單</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">$400起</span>
-                    <span class="stat-label">親民價位</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">Top 100%</span>
-                    <span class="stat-label">CP 值認證</span>
-                </div>
-            </div>
-            <div class="hero-action animate-in delay-3">
-                <button id="randomPickerBtn" class="picker-btn">
-                    <i class="fas fa-dice"></i> 🥩 猶豫不決？靈魂選肉機
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Selection Overlay -->
-    <div id="selectionOverlay" class="overlay hidden">
-        <div class="overlay-content">
-            <div class="picker-spinner"></div>
-            <h2 id="pickerStatus">正在精選您的口袋名單...</h2>
-            <div id="pickerResult" class="result-text hidden"></div>
-        </div>
-    </div>
-
-    <main class="container">
-        <section class="filters-section">
-            <div class="filter-group">
-                <button class="filter-btn active" data-type="all">全部</button>
-                <button class="filter-btn" data-type="吃到飽">吃到飽專區</button>
-                <button class="filter-btn" data-type="套餐制">精緻套餐</button>
-                <button class="filter-btn" data-type="個人套餐">個人獨享</button>
-            </div>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="搜尋店家名稱或地點...">
-            </div>
-        </section>
-
-        <section class="main-content-layout">
-            <!-- 左側：地圖預覽懸浮窗 -->
-            <div id="mapPreview" class="map-preview-container">
-                <div id="mapPlaceholder" class="map-placeholder">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <p>點擊右側店家地址</p>
-                    <small>即可直接在此預覽位置</small>
-                </div>
-                <iframe 
-                    id="googleMapIframe"
-                    src="" 
-                    allowfullscreen>
-                </iframe>
-            </div>
-
-            <div class="table-container shadow-lg fade-up">
-                <div class="table-header">
-                    <div class="col-rank">排名</div>
-                    <div class="col-name">店家名稱</div>
-                    <div class="col-type">類型</div>
-                    <div class="col-price">平均價位</div>
-                    <div class="col-location">地址 (地圖)</div>
-                    <div class="col-action">預約</div>
-                </div>
-                <div id="restaurantList" class="table-body">
-                    <!-- Data will be injected here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Booking Links Section... remains same -->
-
-        <!-- Restaurant Reviews Section -->
-        <section class="reviews-section fade-up">
-            <h2 class="section-title">🔥 炭火食記評論牆</h2>
-            
-            <div class="review-compose">
-                <div class="compose-header">
-                    <h3>分享您的美味記憶</h3>
-                    <div class="rating-input">
-                        <span class="star-label">給個好評：</span>
-                        <div class="stars" id="ratingStars">
-                            <i class="far fa-star" data-value="1"></i>
-                            <i class="far fa-star" data-value="2"></i>
-                            <i class="far fa-star" data-value="3"></i>
-                            <i class="far fa-star" data-value="4"></i>
-                            <i class="far fa-star" data-value="5"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="compose-body">
-                    <select id="reviewRestaurant" class="review-select">
-                        <option value="" disabled selected>請選擇您品嚐過的店家</option>
-                        <!-- Options will be populated via JS -->
-                    </select>
-                    <input type="text" id="reviewAuthor" placeholder="您的暱稱 (例如：肉肉特攻隊)" class="review-input">
-                    <textarea id="reviewText" placeholder="分享這家店的 CP 值、服務或是必點美味..." class="review-textarea"></textarea>
-                    <button id="submitReview" class="submit-btn">
-                        <i class="fas fa-paper-plane"></i> 發表評論
-                    </button>
-                </div>
-            </div>
-
-            <div id="reviewsWall" class="reviews-wall">
-                <!-- Reviews will be loaded here from Firebase -->
-                <div class="loading-reviews">
-                    <i class="fas fa-spinner fa-spin"></i> 正在火速載入大家的食記...
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Firebase SDK (Modular Version) -->
-    <script type="module">
-        // Firebase config will be injected here
-    </script>
-
-    <footer class="footer">
-        <p>&copy; 2026 台中燒肉最強推薦委員會. <br>內容已由 Carrot 更新維護（工人持續施工中...）</p>
-    </footer>
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="data.js"></script>
-    <script src="config.js"></script>
-    <script src="script.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

@@ -1,23 +1,16 @@
-# 2026 台中燒肉 CP 值排行榜
+# React + Vite
 
-這是 2026 年台中最強燒肉名單。
-專為想吃「高 CP 値」燒肉的朋友整理，精選 20 家必吃名單。
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 工人更新指南 (Manual Update Guide)
+Currently, two official plugins are available:
 
-本網頁內容由「工人」手動維護。若需要更新內容：
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-1. 開啟 `data.js` 檔案。
-2. 修改 `restaurantsData` 陣列中的資料。
-3. 修改後存檔，重新發布（Push to GitHub）即可自動更新網頁。
+## React Compiler
 
-## 網站連結
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-發布後網址為： [https://DarkSchneider1024.github.io/eat_dinner/](https://DarkSchneider1024.github.io/eat_dinner/)
-(需手動在 GitHub Repo Settings 中啟用 Pages 功能)
+## Expanding the ESLint configuration
 
-## 技術堆疊
-
-- HTML5 / CSS3 / JavaScript (Vanilla)
-- Google Fonts (Outfit, Inter, Noto Sans TC)
-- SEO Optimized
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

@@ -1,3 +1,6 @@
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
     apiKey: "AIzaSyBGheuvbR1NKe6PA0pLrdeJB0kyr5mNSxQ",
     authDomain: "eatdinner-bb986.firebaseapp.com",
@@ -8,7 +11,5 @@ const firebaseConfig = {
     measurementId: "G-LFQZ1NFR9H"
 };
 
-// 讓 Node.js (test_firebase.js) 也能 require 取用，而在瀏覽器端則掛在全域變數上
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = firebaseConfig;
-}
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);

@@ -1,4 +1,4 @@
-const restaurantsData = [
+export const restaurantsData = [
     { rank: "01", name: "森森燒肉", type: "半自助式", price: "$900 - $1,500", address: "台中市南屯區公益路二段211號", link: "https://www.morimorisun.com/" },
     { rank: "02", name: "肉次方", type: "吃到飽", price: "$600 - $1,100", address: "台中市北屯區文心路四段585號", link: "https://www.powerofmeat.com.tw/" },
     { rank: "03", name: "烤狀猿", type: "吃到飽", price: "$600 - $1,300", address: "台中市大里區大里路118號", link: "https://www.ksy.com.tw/" },
@@ -23,7 +23,7 @@ const restaurantsData = [
     { rank: "22", name: "燒肉中山", type: "套餐制", price: "$1,500 - $3,000", address: "台中市南屯區大墩路533號", link: "#" }
 ];
 
-const bookingLinks = [
+export const bookingLinks = [
     { name: "烤狀猿官網", url: "https://www.ksy.com.tw/" },
     { name: "森森燒肉", url: "https://www.morimorisun.com/" },
     { name: "肉次方預約", url: "https://www.powerofmeat.com.tw/" },
