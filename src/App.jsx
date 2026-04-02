@@ -5,6 +5,7 @@ import { restaurantsData } from './data';
 import './index.css';
 
 function App() {
+  const [selectedCity, setSelectedCity] = useState('台中');
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [mapUrl, setMapUrl] = useState('');
@@ -35,10 +36,11 @@ function App() {
   }, []);
 
   const filteredRestaurants = restaurantsData.filter(item => {
+    const matchCity = item.city === selectedCity;
     const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                         item.address.toLowerCase().includes(searchTerm.toLowerCase());
     const matchType = filterType === 'all' || item.type.includes(filterType);
-    return matchSearch && matchType;
+    return matchCity && matchSearch && matchType;
   });
 
   const getTypeBadgeClass = (type) => {
@@ -46,6 +48,7 @@ function App() {
     if (type.includes('套餐')) return 'type-set-menu';
     if (type.includes('個人')) return 'type-individual';
     if (type.includes('單點')) return 'type-ala-carte';
+    if (type.includes('專人')) return 'type-mixed'; // For 官東燒肉
     return 'type-mixed';
   };
 
@@ -71,9 +74,12 @@ function App() {
   };
 
   const startPicker = () => {
-    setPickerState({ show: true, text: "正在從最強口袋名單中為您挑選...", result: '' });
+    const cityPool = restaurantsData.filter(r => r.city === selectedCity);
+    if (cityPool.length === 0) return;
+
+    setPickerState({ show: true, text: `正在從${selectedCity}最強口袋名單中挑選...`, result: '' });
     setTimeout(async () => {
-      const winner = restaurantsData[Math.floor(Math.random() * restaurantsData.length)];
+      const winner = cityPool[Math.floor(Math.random() * cityPool.length)];
       setPickerState({ show: true, text: "🔥 您的今日命定燒肉是：", result: winner.name });
 
       const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${winner.name} ${winner.address}`)}`;
@@ -117,10 +123,10 @@ function App() {
       <header className="hero">
         <div className="hero-overlay"></div>
         <div className="hero-content">
-          <h1 className="animate-in">台中燒肉 <span className="highlight">最強排行榜</span></h1>
-          <p className="animate-in delay-1">2026 頂級精選・必吃口袋名單</p>
+          <h1 className="animate-in">{selectedCity}燒肉 <span className="highlight">最強排行榜</span></h1>
+          <p className="animate-in delay-1">2026 {selectedCity}地區精選・必吃口袋名單</p>
           <div className="hero-stats animate-in delay-2">
-            <div className="stat-item"><span className="stat-value">20+</span><span className="stat-label">店家名單</span></div>
+            <div className="stat-item"><span className="stat-value">{filteredRestaurants.length}+</span><span className="stat-label">店家名單</span></div>
             <div className="stat-item"><span className="stat-value">$400起</span><span className="stat-label">親民價位</span></div>
             <div className="stat-item"><span className="stat-value">Top 100%</span><span className="stat-label">CP 值認證</span></div>
           </div>
@@ -143,18 +149,31 @@ function App() {
       )}
 
       <main className="container">
+        <section className="city-selector fade-up">
+           <div className="city-tabs">
+              {['台中', '彰化', '斗六', '嘉義'].map(city => (
+                <button 
+                  key={city}
+                  className={`city-tab ${selectedCity === city ? 'active' : ''}`}
+                  onClick={() => { setSelectedCity(city); setMapUrl(''); }}>
+                  {city}
+                </button>
+              ))}
+           </div>
+        </section>
+
         <section className="filters-section">
           <div className="filter-group">
-            {['all', '吃到飽', '套餐制', '個人套餐'].map(type => (
+            {['all', '吃到飽', '套餐制', '個人套餐', '專人代烤'].map(type => (
               <button key={type} 
                 className={`filter-btn ${filterType === type ? 'active' : ''}`}
                 onClick={() => setFilterType(type)}>
-                {type === 'all' ? '全部' : type}
+                {type === 'all' ? '全部類型' : type}
               </button>
             ))}
           </div>
           <div className="search-box">
-            <input type="text" placeholder="搜尋店家名稱或地點..." 
+            <input type="text" placeholder={`搜尋${selectedCity}店家名稱或地點...`} 
               value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
           </div>
         </section>
@@ -186,7 +205,10 @@ function App() {
                 return (
                   <div key={idx} className={`table-row animate-in ${!hasLink ? 'no-link-row' : ''}`}>
                     <div className="col-rank">{item.rank}</div>
-                    <div className="col-name">{item.name}</div>
+                    <div className="col-name">
+                        {item.name}
+                        {item.name.includes('官東') && <span className="recommend-tag">👑 行家推薦</span>}
+                    </div>
                     <div className="col-type"><span className={`type-badge ${getTypeBadgeClass(item.type)}`}>{item.type}</span></div>
                     <div className="col-price">{item.price}</div>
                     <div className="col-location">
@@ -195,7 +217,7 @@ function App() {
                       </a>
                     </div>
                     <div className="col-action">
-                      {hasLink ? <a href={item.link} target="_blank" rel="noreferrer" className="reserve-btn">立即訂位</a> : <span className="reserve-btn disabled-btn">尚未提供</span>}
+                      {hasLink ? <a href={item.link} target="_blank" rel="noreferrer" className="reserve-btn">立即預約</a> : <span className="reserve-btn disabled-btn">尚未提供</span>}
                     </div>
                   </div>
                 )
@@ -222,7 +244,7 @@ function App() {
             <div className="compose-body">
               <select className="review-select" value={reviewForm.restaurant} onChange={e => setReviewForm({...reviewForm, restaurant: e.target.value})}>
                 <option value="" disabled>請選擇您品嚐過的店家</option>
-                {restaurantsData.map((item, i) => (
+                {restaurantsData.filter(r => r.city === selectedCity).map((item, i) => (
                   <option key={i} value={item.name}>{item.rank}. {item.name}</option>
                 ))}
               </select>
@@ -261,7 +283,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>&copy; 2026 台中燒肉最強推薦委員會. <br/>內容已由 React 重構升級 ⚛️</p>
+        <p>&copy; 2026 {selectedCity}燒肉最強推薦委員會. <br/>React + Vite 跨城市版本升級 ⚛️</p>
       </footer>
     </>
   );
